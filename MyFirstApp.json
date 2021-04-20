@@ -1,0 +1,45 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+     "sku":{
+      "type": "string",
+      "defaultValue":"S1",
+      "metadata":{
+        "description":"The sku of AppServicePlan,by default is Standard S1"
+    }
+}
+    },
+    "variables": {
+        "appServiceplanName":"[concat('AppServicePlan',uniqueString('11'))]",
+        "appName":"[concat('webappname',uniqueString('11'))]"
+    },
+    "resources": [
+    {
+        "apiversion":"2018-02-01",
+        "type": "Microsoft.Web/serverfarms",
+        "kind": "app",
+        "name":"[variables('appServiceplanName')]",
+        "location":"[resourceGroup().location]",
+        "properties":{},
+    "dependsOn":[],
+        "sku":{
+            "name":"[parameters('sku')]"
+        }
+     },
+         {
+         "name":"[variables('appName')]",
+         "type": "Microsoft.Web/sites",
+         "apiVersion": "2018-11-01",
+         "location":"[resourceGroup().location]",
+         "dependsOn": [
+             "[resourceid('Microsoft.Web/serverfarms',variables('appServiceplanName'))]"
+         ],
+         "properties": {
+             "name":"[variables('appName')]",
+             "serverFarmId": "[resourceid('Microsoft.Web/serverfarms',variables('appServiceplanName'))]"
+         }
+     }
+],
+"outputs": {}
+}
